@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% extends "base_template.html" %}
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}Title{% endblock title %}
+
+</head>
+<body>
+{% load static %}
+{% block content %}
+    <div class="content">
+        <div class="wrapper clearfix">
+
+            <div class="content__filters">
+                <div class="filter clearfix">
+                    <div class="button__container">
+                        <a href="#" class="filter__btn">фильтр</a>
+                    </div>
+                    <div class="filter_wrap clearfix">
+                        <p class="filter__title">Стоимость</p>
+                        <div class="filter__value">
+                            <div class="slider__container">
+                                <div id="slider"></div>
+                            </div>
+                            <div class="clearfix">
+                                <div class="slider__min-value">
+                                    <input type="text" value="0" name="" id="amount" disabled>
+                                    <label for="amount">руб.</label>
+                                </div>
+                                <div class="slider__max-value">
+                                    <input type="text" value="5000" name="" id="amount1" disabled>
+                                    <label for="amount1">руб.</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter__product">
+                            <p class="filter__title">Букеты с</p>
+                            <form action="" method="" class="clearfix">
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="rose" name="check" id="rose">
+                                    <label for="rose">Розами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="lily" name="check" id="lily">
+                                    <label for="lily">Лилиями</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="gerbera" name="check" id="gerbera">
+                                    <label for="gerbera">Герберами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="peony" name="check" id="peony">
+                                    <label for="peony">Пионами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="callas" name="check" id="callas">
+                                    <label for="callas">Каллами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="iris" name="check" id="iris">
+                                    <label for="iris">Ирисами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="orchids" name="check" id="orchids">
+                                    <label for="orchids">Орхидеями</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="carnations" name="check" id="carnations">
+                                    <label for="carnations">Гвоздиками</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="tulips" name="check" id="tulips">
+                                    <label for="tulips">Тюльпанами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="daisies" name="check" id="daisies">
+                                    <label for="daisies">Ромашкой</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="chrysanthemum" name="check" id="chrysanthemum">
+                                    <label for="chrysanthemum">Хризантемами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="alstroemeria" name="check" id="alstroemeria">
+                                    <label for="alstroemeria">Альстромериями</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="lisianthus" name="check" id="lisianthus">
+                                    <label for="lisianthus">Лизиантусами</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="exotic" name="check" id="exotic">
+                                    <label for="exotic">Екзотическими цветами</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="filter__whom">
+                            <p class="filter__title">Кому</p>
+                            <form action="" method="" class="clearfix">
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="male" name="check" id="male">
+                                    <label for="male">Мужчина</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="female" name="check" id="female">
+                                    <label for="female">Женщина</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="child" name="check" id="child">
+                                    <label for="child">Ребенок</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="family" name="check" id="family">
+                                    <label for="family">Семья</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="favorite" name="check" id="favorite">
+                                    <label for="favorite">Любимой</label>
+                                </div>
+                                <div class="checkbox__container">
+                                    <input type="checkbox" value="partners" name="check" id="partners">
+                                    <label for="partners">Деловому партнеру</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="filter__search">
+                            <p class="filter__title">Поиск</p>
+                            <label for="">
+                                <input type="search" placeholder="Что вы ищите?" class="search__field"><a href="#"
+                                                                                                          class="search__btn"></a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if product_list %}
+                <div class="good">
+                {% for good in product_list %}
+                    <div class="goods__wrap clearfix">
+
+                    <div class="goods__item {{ good.label }}">
+                        <a href="{% url 'shop:product-detail' good.id %}">
+                            <div class="goods__img">
+                                <img src="{{ good.img_1.url }}" alt="{{ good.category }}">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="{% url 'shop:product-detail' good.id %}">{{ good.name }} </a>
+                        <p class="goods__price">{{ good.price }} руб.</p>
+                        <a href="{% url 'shop:add-to-basket' good.id %}" class="goods__btn">Заказать</a>
+                    </div>
+                {% endfor %}
+
+            {% block pagination %}
+                {% if is_paginated %}
+                    <div class="goods__pages">
+                        <ul>
+                            {% if page_obj.has_previous %}
+                                <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Previous</a>
+                            {% endif %}
+                            <li><a class="pages_active"
+                                   href="{{ request.path }}">{{ page_obj.number }}</a></li>
+                            {% if page_obj.has_next %}
+                                <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Next</a>
+                            {% endif %}
+
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endblock pagination %}
+
+
+            </div>
+            {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="news">
+        <div class="wrapper">
+            <div class="news__head clearfix">
+                <p class="section__title news__title">Новости</p>
+                <a class="news__list" href="#">Все новости</a>
+            </div>
+            <div class="news__cols clearfix">
+                <div class="col_x3">
+                    <div class="news__item">
+                        <div class="news__images">
+                            <img src="{% static 'img/img_news-1.jpg' %}" alt="">
+                            <a href="#" class="news__hover"></a>
+                        </div>
+                        <div class="news__content">
+                            <p class="news__date">01.01.16</p>
+                            <a href="#" class="news__text">С Новым годом 2016!</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col_x3">
+                    <div class="news__item">
+                        <div class="news__images">
+                            <img src="{% static 'img/img_news-2.jpg' %}" alt="">
+                            <a href="#" class="news__hover"></a>
+                        </div>
+                        <div class="news__content">
+                            <p class="news__date">01.01.16</p>
+                            <a href="#" class="news__text">Как украсить дом к Новому году?</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col_x3">
+                    <div class="news__item">
+                        <div class="news__images">
+                            <img src="{% static 'img/img_news-3.jpg' %}" alt="">
+                            <a href="#" class="news__hover"></a></div>
+                        <div class="news__content">
+                            <p class="news__date">01.01.16</p>
+                            <a href="#" class="news__text">Розыгрыш новогоднего подарка</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
+</body>
+</html>

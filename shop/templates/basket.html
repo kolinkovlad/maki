@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<body>
+{% extends 'base_template.html' %}
+{% block content %}
+
+    <div class="orderpage">
+    <div class="wrapper">
+
+    <div class="pr__order-container">
+        <div class="pr-order">
+            <p class="unit__title"><span class="unit__num">1</span>Ваш заказ</p>
+            <div class="pr-order__box">
+                <div class="pr-order__table">
+                    <div class="pr-order__head">
+                        <p class="pr-order__element element__name">Наименование</p>
+                        <p class="pr-order__element"></p>
+                        <p class="pr-order__element element__price">Цена {{ good_price }}</p>
+                        <p class="pr-order__element element__amount">Количество {{ quantity_goods }}</p>
+                        <p class="pr-order__element element__sum">Сумма </p>
+                        <p class="pr-order__element element__sum">Изменить </p>
+                    </div>
+                    {% for good, quantity, summ in goods %}
+                        <div class="pr-order__item">
+                            <div class="item_photo">
+                                <a href="{% url 'shop:product-detail' good.id %}"><img src="{{ good.img_1.url }}" alt=""></a></div>
+                            <div class="item__name"> <a href="{% url 'shop:product-detail' good.id %}"> {{ good.name }}</a></div>
+                            <div class="item__price">{{ good.price }} руб.</div>
+                            <div class="item__count">
+                                <div class="order__quantity-container"><a href="#"
+                                                                          class="order__quantity-button order__minus">-</a>
+                                    <input type="text" value="{{ quantity }}" name="order__count" maxlength="4"
+                                           class="order__count"><a
+                                            href="#" class="order__quantity-button order__plus">+</a>
+                                </div>
+                            </div>
+                            <div class="item__sum">{{ summ }} руб.</div>
+                            <div class="item__edit">
+                                <a href="{% url 'shop:del-good-from-basket' %}?remove=good_{{ good.id }}">Видалити</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                <div class="pr-order__sum">
+                    <p>Сумма:<span>{{ total_sum }} руб.</span></p>
+                </div>
+            </div>
+        </div>
+        <a href="{% url 'shop:product-order' %}" style="display: inline-block" class="order__button">Оформить заказ</a>
+    </div>
+
+
+
+
+
+{% endblock content %}
+</body>
+</html>

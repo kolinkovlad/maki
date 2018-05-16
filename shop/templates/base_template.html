@@ -15,6 +15,31 @@
 <body>
 <header class="header">
     <div class="header__top">
+        <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'shop:user-registration' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
+                </li>
+                <li><a>
+                    <span class="glyphicon glyphicon-user"></span>Have an Account?
+                    <form method="post" action={% url 'login' %}>
+                        {% csrf_token %}
+                        <label> Name: </label>
+                        <input type="text" name="username">
+                        <label> Password: </label>
+                        <input type="password" name="password">
+                        <input type="submit" name="Login">
+                    </form>
+                </a>
+
+                </li>
+
+
+
+            {% endif %}
+        </ul>
+
         <div class="wrapper">
             <div class="header__search">
                 <form class="search_form" method="get" action="shop/product_list.html"><input class="search__field"
@@ -48,7 +73,7 @@
             <div class="col_pull clearfix">
                 <div class="col_x3">
                     <div class="header__logo">
-                        <a href="#">
+                        <a href="{% url 'shop:homeview' %}">
                             <img src="{% static 'img/logo.png' %}" alt="logo">
                             <span class="logo__text">Интернет-магазин цветов</span>
                         </a>
@@ -64,15 +89,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="col_x3">
-                    <div class="header__order">
-                        <a href="#" class="order__btn">Корзина</a>
-                        <div class="order__text">
-                            <p class=""><span class=" text_bold">{{ total_quantity }}</span> товаров</p>
-                            <p class="">На сумму <span class=" text_bold">{{ total_sum }} руб.</span></p>
-                        </div>
-                    </div>
-                </div>
+                {% if not order %}
+                    {% block basket %}
+                        <div class="col_x3">
+                            <div class="header__order">
+                                <a href="{% url 'shop:basket' %}" class="order__btn">Корзина</a>
+                                <div class="order__text">
+                                    <p class=""><span class=" text_bold">{{ total_quantity }}</span> товаров</p>
+                                    <p class="">На сумму <span class=" text_bold">{{ total_sum }} руб.</span></p>
+                                </div>
+                            </div>
+                        </div>{% endblock %}
+
+                {% endif %}
+
             </div>
         </div>
     </div>

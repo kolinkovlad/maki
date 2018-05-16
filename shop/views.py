@@ -1,6 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, render_to_response, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import generic
+
+from shop.forms import RegisterUserForm, AddToBasketFromDetails
 from .models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -26,6 +32,7 @@ class TopProductCookiesMixin:
 
         context['total_quantity'] = quantity
         context['sum'] = sum
+        context['order'] = False
         return context
 
 
@@ -36,12 +43,6 @@ class HomePage(TopProductCookiesMixin, generic.ListView):
     def listing(self):
         product_list = Product.objects.all()
         paginator = Paginator(product_list, 4)  # Show 4 contacts per page
-
-    def get_queryset(self):
-        result = super(HomePage, self).get_queryset()
-        if self.request.GET.get('data_search'):
-            result = result.filter(text__contains=self.request.GET.get('data_search'))
-        return result
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(HomePage, self).get_context_data(**kwargs)
@@ -66,6 +67,26 @@ class HomePage(TopProductCookiesMixin, generic.ListView):
 class ProductDetail(TopProductCookiesMixin, generic.DetailView):
     model = Product
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        if self.request.GET.get('order_quantity'):
+            print("GEEET")
+            self.request.session['good_' + str(self.kwargs['pk'])] = int(self.request.GET.get('order_quantity'))
+        context = super().get_context_data(object_list=None, **kwargs)
+        context['quantity'] = self.request.session.get('good_' + str(self.kwargs['pk']), 1)
+        return context
+
+    # def get_queryset(self):
+    #     result = super().get_queryset()
+    #     result2 = Product.objects.all()
+    #     return result2
+
+
+def add_to_basket_from_details(request, pk):
+    print(request.GET.get('order_quantity'))
+    good = 'good_' + str(pk)
+    quantity = request.session.get(good, 0)
+    # request.session[good] = quantity + value_quantity
+
 
 def save_feedback(request):
     if request.POST:
@@ -74,7 +95,9 @@ def save_feedback(request):
         feedback.user_id = int(request.POST['user_id'])
         feedback.product_id = int(request.POST['product_id'])
         feedback.text = request.POST['text']
-        feedback.save()
+
+        if not Feedback.objects.filter(text__contains=request.POST['text']):
+            feedback.save()
 
         return redirect(to=request.POST['url'])
     else:
@@ -91,5 +114,91 @@ def add_to_basket(request, pk):
     return redirect(to='/shop/homepage/')
 
 
-class Order(generic):
-    pass
+def del_good_from_basket(request):
+    request.session.pop(request.GET.get('remove'))
+    return redirect('shop:basket')
+
+
+class ProductBasket(generic.TemplateView, TopProductCookiesMixin):
+    template_name = 'basket.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(ProductBasket, self).get_context_data(**kwargs)
+        total_sum = 0
+        goods = []
+
+        for item in self.request.session.keys():
+            if 'good_' not in item:
+                continue
+            quantity_goods = int(self.request.session.get(item))
+            context['total_quantity'] = quantity_goods
+
+            try:
+                good = Product.objects.get(pk=int(item[5:]))
+                summ = quantity_goods * good.price
+                total_sum += summ
+                goods.append((good, int(self.request.session.get(item)), summ))
+            except:
+                pass
+        context['goods'] = goods
+        context['total_sum'] = total_sum
+        context['order'] = True
+        return context
+
+
+class ProductOrder(TopProductCookiesMixin, LoginRequiredMixin, generic.CreateView):
+    template_name = 'product_order.html'
+    model = Order
+    form_class = OrderForm
+    success_url = 'shop:product_list'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['order'] = True
+
+        return context
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+
+    def form_invalid(self, form):
+        print("Form invalid")
+        print(form.cleaned_data)
+
+    # def save_to_database(self):
+
+
+class UserRegistration(generic.CreateView):
+    form_class = RegisterUserForm
+    template_name = 'registration/user_registration.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        return super(UserRegistration, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # print('form valid')
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data['password'])
+        user.save()
+        # print("_______", user)
+        # login(request=self.request, user=user)
+        # print("_______222222", user)
+        # current_site = get_current_site(self.request)
+        # subject = 'Activation of your account'
+        # message = render_to_string('blog/acc_activate_email.html', {'user': user,
+        #                                                             'domain': current_site.domain,
+        #                                                             'uid': urlsafe_base64_encode(
+        #                                                                 force_bytes(user.pk)).decode(),
+        #                                                             'token': account_activation_token.make_token(
+        #                                                                 user)})
+        # to_email = form.cleaned_data['email']
+        #
+        # email = EmailMessage(subject, message, to=[to_email])
+        # email.send()
+        # messages.success(self.request, 'Please confirm account by your e-mail.')
+
+        return redirect(to='/shop/homepage/')

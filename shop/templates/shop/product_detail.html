@@ -15,18 +15,18 @@
                         </div>
                         <div class="img__sm_wrap">
                             <div class="gallery__img_sm">
-                                <a href="img/gallery_img_lg1.jpg" data-marker="1" data-alt="">
-                                    <img src="img/gallery_img_sm1.jpg" alt="bouquets details">
+                                <a href="{{ product.img_1.url }}" data-marker="1" data-alt="">
+                                    <img src="{{ product.img_1.url }}" alt="bouquets details">
                                 </a>
                             </div>
                             <div class="gallery__img_sm">
-                                <a href="img/gallery_img_lg2.jpg" data-marker="2" data-alt="">
-                                    <img src="img/gallery_img_sm2.jpg" alt="bouquets details">
+                                <a href="" data-marker="2" data-alt="">
+                                    <img src="" alt="bouquets details">
                                 </a>
                             </div>
                             <div class="gallery__img_sm">
-                                <a href="img/gallery_img_lg3.jpg" data-marker="3" data-alt="">
-                                    <img src="img/gallery_img_sm3.jpg" alt="bouquets details">
+                                <a href="" data-marker="3" data-alt="">
+                                    <img src="" alt="bouquets details">
                                 </a>
                             </div>
                         </div>
@@ -36,7 +36,7 @@
                             <div class="comments_md">
                                 <div class="comments__top clearfix">
                                     <span class="comments__title">Отзывы покупателей</span>
-                                    <span class="comments__quantity"> {{ product.feedback_set.all.count }} отзыв</span>
+                                    <span class="comments__quantity"> {{ forloop.counter }} отзыв</span>
                                 </div>
                                 <div class="comments__item">
                                     <div class="comment__header clearfix">
@@ -46,25 +46,17 @@
                                     </div>
                                     <div class="comment__text">{{ feedback.text }}</div>
                                 </div>
-{#                                <div class="comments__item">#}
-{#                                    <div class="comment__header">#}
-{#                                        <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>#}
-{#                                        <p class="comment__date">01.01.16</p>#}
-{#                                        <p class="comment__name">Светлана Алексеева</p>#}
-{#                                    </div>#}
-{#                                    <div class="comment__text">Быстрая доставка. Сервис на уровне. Спасибо большое!!!#}
-{#                                    </div>#}
-{#                                </div>#}
+
                                 {% if product.feedback_set.all.count > 5 %}
-                                    <div class="comments__footer">
-                                        <a href="#" class="comments__show-more">Показать еще</a>
-                                    </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
+                                    <div class="comments__footer">
+                                        <a href="#" class="comments__show-more">Показать еще</a>
+                                    </div>
                     {% endif %}
-                {% if user.is_authenticated %}
-                    <div class="recall recall_md">
+                    {% if user.is_authenticated %}
+                        <div class="recall recall_md">
 
                             <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>
                             <label for="recall" class="recall__title">Написать отзыв</label>
@@ -78,231 +70,237 @@
                             <textarea name="text" id="recall" cols="30" rows="4"></textarea>
                             <button type="submit" class="btn_form">Отправить</button>
                         </form>
-                    </div>
-                {% endif %}
+                        </div>
+                    {% endif %}
 
 
-                </div>
-                <div class="col_x2">
-                    <div class="order">
-                        <p class="order__title">{{ product.name }}</p>
-                        <div class="order__container">
-                            <div class="order__main clearfix">
-                                <div class="order__price-container">
-                                    <p class="order__price">{{ product.price }} руб.</p>
+            </div>
+            <div class="col_x2">
+                <div class="order">
+                    <p class="order__title">{{ product.name }}</p>
+                    <div class="order__container">
+                        <div class="order__main clearfix">
+                            <div class="order__price-container">
+                                <p class="order__price">{{ product.price }} руб.</p>
+                                {#                                {% for good, guantity in goods %}#}
+                                <form action="{% url 'shop:product-detail' product.id %}" method="get">
                                     <div class="order__quantity">
-                                        <p class="order__quantity-text">{{ product.quantity }}</p>
-                                        <div class="order__quantity-container"><a href="#"
-                                                                                  class="order__quantity-button order__minus">-</a>
-                                            <input type="text" value="1" name="order__count" maxlength="4"
-                                                   class="order__count"><a href="#"
-                                                                           class="order__quantity-button order__plus">+</a>
-                                        </div>
+                                    <p class="order__quantity-text">{{ product.quantity }}</p>
+                                    <div class="order__quantity-container"><a href="#"
+                                                                              class="order__quantity-button order__minus">-</a>
+                                        <input type="text" value="{{ quantity }}" name="order_quantity" maxlength="4"
+
+                                               class="order__count"><a href="#"
+                                                                       class="order__quantity-button order__plus">+</a>
                                     </div>
                                 </div>
-                                <div class="order__button-container"><a href="#" class="order__button">ЗАКАЗАТЬ</a>
+                                <div class="order__button-container"><input class="order__button" type="submit" value="ЗАКАЗАТЬ">
                                 </div>
-                            </div>
-                            <div class="order__footer">При заказе букета вы получите 3% бонусов или 90 рублей. Вы их
-                                можете использовать при следующем заказе.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="delivery">
-                        <p class="delivery__title">Доставка</p>
-                        <p class="delivery__item delivery__standart">С 9.00 до 24.00 - <span>500 руб.</span></p>
-                        <p class="delivery__item delivery__nighttime">Доставка в ночное время - <span>700 руб.</span>
-                        </p>
-                    </div>
-                    <div class="description">
-                        <p class="description__title">Описание буклета</p>
-                        <p class="description__text"> {{ product.description }} </p>
-                    </div>
+                                </form>
 
-                    <div class="comments_sm">
-                        <div class="comments__top clearfix">
-                            <span class="comments__title">Отзывы покупателей</span>
-                            <span class="comments__quantity">2 отзыва</span>
-                        </div>
-                        <div class="comments__item">
-                            <div class="comment__header clearfix">
-                                <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>
-                                <p class="comment__date">01.01.16</p>
-                                <p class="comment__name">Михаил Святославович</p>
-                            </div>
-                            <div class="comment__text">Канна. Название интересное, цветок тропический. В диком виде в
-                                нашей стране она не произрастает, а вот на клумбах наших городов часто можно встретить
-                                Канну причём в основном красных оттенков почему то. На самом деле Канна...
+                                {#                                {% endfor %}#}
                             </div>
                         </div>
-                        <div class="comments__item">
-                            <div class="comment__header">
-                                <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>
-                                <p class="comment__date">01.01.16</p>
-                                <p class="comment__name">Светлана Алексеева</p>
-                            </div>
-                            <div class="comment__text">Быстрая доставка. Сервис на уровне. Спасибо большое!!!</div>
-                        </div>
-                        <div class="comments__footer">
-                            <a href="#" class="comments__show-more">Показать еще</a>
+                        <div class="order__footer">При заказе букета вы получите 3% бонусов или 90 рублей. Вы их
+                            можете использовать при следующем заказе.
                         </div>
                     </div>
-                    <div class="recall recall_sm">
-                        <div class="recall__header clearfix">
-                            <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>
-                            <label for="recall_sm" class="recall__title">Написать отзыв</label>
-                        </div>
-                        <form action="#">
-                            <textarea name="comment" id="recall_sm" cols="30" rows="4"></textarea>
-                            <button type="submit" class="btn_form">Отправить</button>
-                        </form>
-                    </div>
-
                 </div>
+                <div class="delivery">
+                    <p class="delivery__title">Доставка</p>
+                    <p class="delivery__item delivery__standart">С 9.00 до 24.00 - <span>500 руб.</span></p>
+                    <p class="delivery__item delivery__nighttime">Доставка в ночное время - <span>700 руб.</span>
+                    </p>
+                </div>
+                <div class="description">
+                    <p class="description__title">Описание буклета</p>
+                    <p class="description__text"> {{ product.description }} </p>
+                </div>
+
+                <div class="comments_sm">
+                    <div class="comments__top clearfix">
+                        <span class="comments__title">Отзывы покупателей</span>
+                        <span class="comments__quantity">2 отзыва</span>
+                    </div>
+                    <div class="comments__item">
+                        <div class="comment__header clearfix">
+                            <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>
+                            <p class="comment__date">01.01.16</p>
+                            <p class="comment__name">Михаил Святославович</p>
+                        </div>
+                        <div class="comment__text">Канна. Название интересное, цветок тропический. В диком виде в
+                            нашей стране она не произрастает, а вот на клумбах наших городов часто можно встретить
+                            Канну причём в основном красных оттенков почему то. На самом деле Канна...
+                        </div>
+                    </div>
+                    <div class="comments__item">
+                        <div class="comment__header">
+                            <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>
+                            <p class="comment__date">01.01.16</p>
+                            <p class="comment__name">Светлана Алексеева</p>
+                        </div>
+                        <div class="comment__text">Быстрая доставка. Сервис на уровне. Спасибо большое!!!</div>
+                    </div>
+                    <div class="comments__footer">
+                        <a href="#" class="comments__show-more">Показать еще</a>
+                    </div>
+                </div>
+{#                <div class="recall recall_sm">#}
+{#                    <div class="recall__header clearfix">#}
+{#                        <div class="stars_recall rating_1x rating_2x rating_3x rating_4x rating_5x"></div>#}
+{#                        <label for="recall_sm" class="recall__title">Написать отзыв</label>#}
+{#                    </div>#}
+{#                    <form action="#">#}
+{#                        <textarea name="comment" id="recall_sm" cols="30" rows="4"></textarea>#}
+{#                        <button type="submit" class="btn_form">Отправить</button>#}
+{#                    </form>#}
+{#                </div>#}
+
             </div>
-            <div class="clearfix"></div>
-
-            <div class="partners__carousel">
-                <div class="section__title carousel__title">Наши клиенты</div>
-                <ul class="clearfix" id="partners">
-                    <li>
-                        <a href="#">
-                            <img src="img/partners_logo1.png" alt="">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="img/partners_logo2.png" alt="">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="img/partners_logo3.png" alt="">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="img/partners_logo4.png" alt="">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="img/partners_logo5.png" alt="">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <img src="img/partners_logo6.jpg" alt="">
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-
-            <div class="product__carousel">
-                <div class="section__title carousel__title">Вас может заинтересовать</div>
-                <ul class="clearfix" id="gallery">
-                    <li>
-                        <div class="goods__item item_hit">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img1.jpg" alt="gift">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Новогодний подарок</a>
-                            <p class="goods__price">2000 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_new">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img2.jpg" alt="bouquet">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
-                            <p class="goods__price">5589 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_action">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img3.jpg" alt="bouquet">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Букет из альстромерий и коробка конфет Rafaello</a>
-                            <p class="goods__price">1562 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_new">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img2.jpg" alt="bouquet">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
-                            <p class="goods__price">5589 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_hit">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img1.jpg" alt="gift">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Новогодний подарок</a>
-                            <p class="goods__price">2000 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_new">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img2.jpg" alt="bouquet">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
-                            <p class="goods__price">5589 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_action">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img3.jpg" alt="bouquet">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Букет из альстромерий и коробка конфет Rafaello</a>
-                            <p class="goods__price">1562 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="goods__item item_new">
-                            <a href="#">
-                                <div class="goods__img">
-                                    <img src="img/content_img2.jpg" alt="bouquet">
-                                </div>
-                            </a>
-                            <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
-                            <p class="goods__price">5589 руб.</p>
-                            <a href="#" class="goods__btn">Заказать</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-
         </div>
+        <div class="clearfix"></div>
+
+        <div class="partners__carousel">
+            <div class="section__title carousel__title">Наши клиенты</div>
+            <ul class="clearfix" id="partners">
+                <li>
+                    <a href="#">
+                        <img src="{% static 'img/partners_logo1.png' %}" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="{% static 'img/partners_logo2.png' %}" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="{% static 'img/partners_logo3.png' %}" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="{% static 'img/partners_logo4.png' %}" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="{% static 'img/partners_logo5.png' %}" alt="">
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <img src="{% static 'img/partners_logo6.jpg' %}" alt="">
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="product__carousel">
+            <div class="section__title carousel__title">Вас может заинтересовать</div>
+            <ul class="clearfix" id="gallery">
+                <li>
+                    <div class="goods__item item_hit">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img1.jpg" alt="gift">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Новогодний подарок</a>
+                        <p class="goods__price">2000 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_new">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img2.jpg" alt="bouquet">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
+                        <p class="goods__price">5589 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_action">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img3.jpg" alt="bouquet">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Букет из альстромерий и коробка конфет Rafaello</a>
+                        <p class="goods__price">1562 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_new">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img2.jpg" alt="bouquet">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
+                        <p class="goods__price">5589 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_hit">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img1.jpg" alt="gift">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Новогодний подарок</a>
+                        <p class="goods__price">2000 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_new">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img2.jpg" alt="bouquet">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
+                        <p class="goods__price">5589 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_action">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img3.jpg" alt="bouquet">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Букет из альстромерий и коробка конфет Rafaello</a>
+                        <p class="goods__price">1562 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="goods__item item_new">
+                        <a href="#">
+                            <div class="goods__img">
+                                <img src="img/content_img2.jpg" alt="bouquet">
+                            </div>
+                        </a>
+                        <a class="goods__name" href="#">Букет из красных роз, 1000 шт.</a>
+                        <p class="goods__price">5589 руб.</p>
+                        <a href="#" class="goods__btn">Заказать</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+    </div>
     </div>
 {% endblock content %}
 
